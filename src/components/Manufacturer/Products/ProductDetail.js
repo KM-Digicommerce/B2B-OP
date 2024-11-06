@@ -13,6 +13,11 @@ import {
   CardContent,
   TextField,
   IconButton,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableRow,
 } from '@mui/material';
 import Edit from '@mui/icons-material/Edit';
 
@@ -26,9 +31,9 @@ function ProductDetail() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [mainImage, setMainImage] = useState('');
-  const [isEditMode, setIsEditMode] = useState(initialEditMode); // Control edit mode state
+  const [isEditMode, setIsEditMode] = useState(initialEditMode);
 
-  // State for editable fields
+  // Editable fields state
   const [product_name, setName] = useState('');
   const [long_description, setDescription] = useState('');
   const [sku, setSku] = useState('');
@@ -46,8 +51,23 @@ function ProductDetail() {
     const fetchProduct = async () => {
       try {
         const response = await axios.get(`${process.env.REACT_APP_IP}obtainProductDetails/?project_id=${id}`);
-        setProduct(response.data.data || {});
-        setMainImage(response.data.data.logo || ''); // Set default main image
+        const data = response.data.data || {};
+        setProduct(data);
+        setMainImage(data.logo || '');
+
+        // Initialize editable fields
+        setName(data.product_name || '');
+        setDescription(data.long_description || '');
+        setSku(data.sku_number_product_code_item_number || '');
+        setModel(data.model || '');
+        setMpn(data.mpn || '');
+        setDiscount((data.discount?.toString() || '').replace('%', '') || '');
+        setUpcEan(data.upc_ean || '');
+        setQuantity(data.quantity || '');
+        setColor(data.attributes?.Color || '');
+        setWeight(data.attributes?.Weight || '');
+        setSize(data.attributes?.Size || '');
+        setAvailability(data.availability || false);
       } catch (err) {
         setError('Failed to load product details');
       } finally {
@@ -57,24 +77,6 @@ function ProductDetail() {
     fetchProduct();
   }, [id]);
 
-  useEffect(() => {
-    if (product) {
-      setName(product.product_name || '');
-      setDescription(product.long_description || '');
-      setSku(product.sku_number_product_code_item_number || '');
-      setModel(product.model || '');
-      setMpn(product.mpn || '');
-      // Convert discount to string before calling replace
-      setDiscount((product.discount?.toString() || '').replace('%', '') || '');
-      setUpcEan(product.upc_ean || '');
-      setQuantity(product.quantity || '');
-      setColor(product.attributes?.Color || '');
-      setWeight(product.attributes?.Weight || '');
-      setSize(product.attributes?.Size || '');
-      setAvailability(product.availability || false);
-    }
-  }, [product]);
-  
   const handleCancel = () => {
     navigate('/manufacturer/products');
   };
@@ -86,40 +88,31 @@ function ProductDetail() {
         sku_number_product_code_item_number: sku,
         model,
         mpn,
-        discount: Number(discount), // Convert to number
+        discount: Number(discount),
         upc_ean: upcEan,
-        quantity: Number(quantity), // Convert to number
-        attributes: {
-          Color: color,
-          Size: size,
-          Weight: weight,
-        },
+        quantity: Number(quantity),
+        attributes: { Color: color, Size: size, Weight: weight },
         availability,
-        currency: product.currency, // Original currency
-        long_description: long_description, // Updated description
-        product_name: product_name, // Updated name
-        list_price: product.list_price, // Original list price
-        images: product.images, // Original images
-        features: product.features, // Original features
+        currency: product.currency,
+        long_description,
+        product_name,
+        list_price: product.list_price,
+        images: product.images,
+        features: product.features,
       };
 
       await axios.post(`${process.env.REACT_APP_IP}updateProduct/`, updatedProduct, {
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
       });
 
-      // Update the state with new values
-      setProduct(prev => ({ ...prev, ...updatedProduct }));
-      setIsEditMode(false); // Disable edit mode after saving
+      setProduct((prev) => ({ ...prev, ...updatedProduct }));
+      setIsEditMode(false);
     } catch (error) {
       setError('Failed to update product');
     }
   };
 
-  const handleImageClick = (image) => {
-    setMainImage(image);
-  };
+  const handleImageClick = (image) => setMainImage(image);
 
   if (loading) return <CircularProgress />;
   if (error) return <div>{error}</div>;
@@ -136,14 +129,9 @@ function ProductDetail() {
       <Grid container spacing={4}>
         <Grid item xs={12} md={5}>
           <Card>
-            <CardMedia 
-              component="img" 
-              height="400" 
-              image={mainImage} 
-              alt={product?.product_name} 
-            />
+            <CardMedia component="img" height="300" image={mainImage} alt={product?.product_name} />
           </Card>
-          <Box display="flex"  gap={1} mt={2} >
+          {/* <Box display="flex" gap={1} mt={2}>
             {product?.product_image_list?.map((image, index) => (
               <img
                 key={index}
@@ -153,34 +141,47 @@ function ProductDetail() {
                 onClick={() => handleImageClick(image)}
               />
             ))}
-          </Box>
+          </Box> */}
           <Box display="flex" gap={1} mt={2} flexWrap={'wrap'}>
             {product?.images?.map((image, index) => (
               <img
                 key={index}
                 src={image}
                 alt={`Product Image ${index}`}
-                style={{ width: '80px', height: '100px', cursor: 'pointer', border: '1px solid #ccc' }}
+                style={{ width: '76px', height: '80px', cursor: 'pointer', border: '1px solid #ccc' }}
                 onClick={() => handleImageClick(image)}
               />
             ))}
           </Box>
+          {/* <Box display="flex" gap={1} mt={2} flexWrap="wrap">
+            {product?.product_image_list?.concat(product?.images || []).map((image, index) => (
+              <img
+                key={index}
+                src={image}
+                alt={`Product ${index}`}
+                style={{ width: '80px', height: '100px', cursor: 'pointer', border: '1px solid #ccc' }}
+                onClick={() => handleImageClick(image)}
+              />
+            ))}
+          </Box> */}
         </Grid>
 
         <Grid item xs={12} md={7}>
           <Card sx={{ mb: 2 }}>
             <CardContent>
-              <Typography variant="h4" gutterBottom>{product?.product_name}</Typography>
+              <Typography variant="h5" style={{fontSize: '19px'}} gutterBottom>{product?.product_name}</Typography>
               <Typography variant="h6" color="text.primary">
                 {product?.currency}{product?.list_price}
               </Typography>
-              <Typography variant="body1" sx={{ mt: 1 }}>{product?.short_description}</Typography>
+              <Typography variant="body1" sx={{ mt: 1, fontSize:'15px' }}>{product?.short_description}</Typography>
               <Box display="flex" gap={2} mt={2}>
-                {product?.availability ? (
-                  <Button variant="contained" color="secondary">In Stock</Button>
-                ) : (
-                  <Button variant="contained" color="primary">Out Of Stock</Button>
-                )}
+                <Button
+                  variant="contained"
+                  style={{ pointerEvents: 'none' }}
+                  color={product?.availability ? 'secondary' : 'primary'}
+                >
+                  {product?.availability ? 'In Stock' : 'Out Of Stock'}
+                </Button>
               </Box>
             </CardContent>
           </Card>
@@ -206,7 +207,6 @@ function ProductDetail() {
                 <TextField label="Color" value={color} onChange={(e) => setColor(e.target.value)} fullWidth />
                 <TextField label="Weight" value={weight} onChange={(e) => setWeight(e.target.value)} fullWidth />
                 <TextField label="Size" value={size} onChange={(e) => setSize(e.target.value)} fullWidth />
-          
               </>
             ) : (
               <>
@@ -215,14 +215,9 @@ function ProductDetail() {
                 <Typography variant="subtitle1">MPN: {mpn}</Typography>
                 <Typography variant="subtitle1">Discount: {discount}%</Typography>
                 <Typography variant="subtitle1">UPC/EAN: {upcEan}</Typography>
-                <Typography variant="subtitle1">
-                  Availability: {availability ? 'In Stock' : 'Out of Stock'}
-                </Typography>
+                {/* <Typography variant="subtitle1">Availability: {availability ? 'In Stock' : 'Out of Stock'}</Typography> */}
                 <Typography variant="subtitle1">Stock Quantity: {quantity}</Typography>
-                <Typography variant="subtitle1">Color: {color}</Typography>
-                <Typography variant="subtitle1">Weight: {weight}</Typography>
-                <Typography variant="subtitle1">Size: {size}</Typography>
-              </>
+                      </>
             )}
           </Box>
 
@@ -234,6 +229,20 @@ function ProductDetail() {
               <Button variant="outlined" onClick={handleCancel}>Cancel</Button>
             </Box>
           )}
+
+<Typography variant="h6" sx={{ mt: 4 }}>Additional Information</Typography>
+          <TableContainer component={Paper} sx={{ mt: 2 }}>
+            <Table>
+              <TableBody>
+                {product?.attributes && Object.entries(product.attributes).map(([key, value]) => (
+                  <TableRow key={key}>
+                    <TableCell component="th" scope="row">{key}</TableCell>
+                    <TableCell>{value}</TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </TableContainer>
         </Grid>
       </Grid>
     </Paper>

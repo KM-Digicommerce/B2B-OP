@@ -29,9 +29,16 @@ const Login = () => {
           case 'dealer_admin':
             navigate('/dealer');
             break;
+            case 'dealer_user':
+              navigate('/dealer');
+              break;
           case 'manufacturer_admin':
             navigate('/manufacturer');
             break;
+
+            case 'manufacturer_user':
+              navigate('/manufacturer');
+              break;
           default:
             alert('Role not recognized');
             navigate('/login');
