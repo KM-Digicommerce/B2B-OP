@@ -1,6 +1,6 @@
 // src/components/Manufacturer/Dealers/DealerList.js
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState } from "react";
 import {
   Box,
   Button,
@@ -17,22 +17,22 @@ import {
   Paper,
 } from "@mui/material";
 import AddNewDealer from "./AddNewDealer";
-import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
-import { styled } from '@mui/material/styles';
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
+import { styled } from "@mui/material/styles";
 
 // Styled TextField
 const CustomTextField = styled(TextField)(({ theme }) => ({
-  '& .MuiOutlinedInput-root': {
-    '& fieldset': {
-      borderRadius: '5px',
+  "& .MuiOutlinedInput-root": {
+    "& fieldset": {
+      borderRadius: "5px",
     },
-    '& input': {
-      height: '20px',
-      padding: '8px', // Set custom padding
-      fontSize: '12px', // Adjust font size for input
+    "& input": {
+      height: "20px",
+      padding: "8px", // Set custom padding
+      fontSize: "12px", // Adjust font size for input
     },
-  }
+  },
 }));
 
 function DealerList() {
@@ -40,12 +40,12 @@ function DealerList() {
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
 
-  const [searchTerm, setSearchTerm] = useState('');
+  const [searchTerm, setSearchTerm] = useState("");
   const [dealers, setDealers] = useState([]);
   const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(10);
+  const [rowsPerPage, setRowsPerPage] = useState(25);
 
-  const user = JSON.parse(localStorage.getItem('user'));
+  const user = JSON.parse(localStorage.getItem("user"));
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -54,22 +54,35 @@ function DealerList() {
 
   const fetchDealers = async () => {
     try {
-      const response = await axios.get(`${process.env.REACT_APP_IP}obtainDealerlist/`, {
-        params: { manufacture_unit_id: user.manufacture_unit_id }
-      });
-      setDealers(response.data.data.map(dealer => ({
-        id: dealer.id,
-        username: dealer.username,
-      })) || []);
+      const response = await axios.get(
+        `${process.env.REACT_APP_IP}obtainDealerlist/`,
+        {
+          params: { manufacture_unit_id: user.manufacture_unit_id },
+        }
+      );
+
+      console.log("Response:", response);
+      setDealers(
+        response.data.data.map((dealer) => ({
+          id: dealer.id,
+          username: dealer.username || "N/A",
+          email: dealer.email || "N/A",
+          contact: dealer.mobile_number || "N/A",
+          location1: dealer.address.country || "N/A",
+          location2: dealer.address.city    || "N/A",
+          company_name: dealer.company_name || "N/A",
+          website: dealer.website || "N/A", 
+          no_of_orders: dealer.no_of_orders || "N/A",
+        })) || []
+      );
     } catch (error) {
       console.error("Error fetching dealers:", error);
     }
   };
 
   const handleRowClick = (username) => {
-    navigate(`/manufacturer/dealer-details/${username}`); 
+    navigate(`/manufacturer/dealer-details/${username}`);
   };
-  
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -82,10 +95,18 @@ function DealerList() {
 
   return (
     <Box sx={{ p: 2, flexGrow: 1 }}>
-      <Box sx={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center', marginBottom:'20px' , gap:2 }}>
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "flex-end",
+          alignItems: "center",
+          marginBottom: "20px",
+          gap: 2,
+        }}
+      >
         <Box>
           <Button
-            sx={{ border: '1px solid #1976d2', textTransform: 'capitalize' }}
+            sx={{ border: "1px solid #1976d2", textTransform: "capitalize" }}
             onClick={handleOpen}
           >
             Add New Dealer
@@ -102,45 +123,51 @@ function DealerList() {
           onChange={(e) => setSearchTerm(e.target.value)}
           sx={{
             flexGrow: 0,
-            width: '300px',
+            width: "300px",
           }}
           placeholder="Search by Dealer ID or Dealer Name"
         />
       </Box>
 
       {/* Dealer Listing table with horizontal scroll */}
-      <Box sx={{ overflowX: 'auto' }}>
+      <Box sx={{ overflowX: "auto" }}>
         <TableContainer component={Paper}>
           <Table>
             <TableHead>
               <TableRow>
-                <TableCell sx={{ fontWeight: 'bold' }}>Name</TableCell>
-                <TableCell sx={{ fontWeight: 'bold' }}>Email</TableCell>
-                <TableCell sx={{ fontWeight: 'bold' }}>Phone</TableCell>
-                <TableCell sx={{ fontWeight: 'bold' }}>Location</TableCell>
-                <TableCell sx={{ fontWeight: 'bold' }}>Company Name</TableCell>
-                <TableCell sx={{ fontWeight: 'bold' }}>Website</TableCell>
-                <TableCell sx={{ fontWeight: 'bold' }}>No of Orders</TableCell>
+                <TableCell sx={{ fontWeight: "bold" }}>Name</TableCell>
+                <TableCell sx={{ fontWeight: "bold" }}>Email</TableCell>
+                <TableCell sx={{ fontWeight: "bold" }}>Phone</TableCell>
+                <TableCell sx={{ fontWeight: "bold" }}>Location</TableCell>
+                <TableCell sx={{ fontWeight: "bold" }}>Company Name</TableCell>
+                <TableCell sx={{ fontWeight: "bold" }}>Website</TableCell>
+                <TableCell sx={{ fontWeight: "bold" }}>No of Orders</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
-              {dealers.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((dealer) => (
-                <TableRow key={dealer.id} onClick={() => handleRowClick(dealer.username)} style={{ cursor: 'pointer' }}>
-                  <TableCell>dealername</TableCell>
-                  <TableCell>dealer@gmail.com</TableCell>
-                  <TableCell>9884514686</TableCell>
-                  <TableCell>Tamil Nadu</TableCell>
-                  <TableCell>Abcd</TableCell>
-                  <TableCell>www.abc.in</TableCell>
-                  <TableCell>5</TableCell>
-                </TableRow>
-              ))}
+              {dealers
+                .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                .map((dealer) => (
+                  <TableRow
+                    key={dealer.id}
+                    onClick={() => handleRowClick(dealer.username)}
+                    style={{ cursor: "pointer" }}
+                  >
+                    <TableCell>{dealer.username}</TableCell>
+                    <TableCell>{dealer.email || "N/A"}</TableCell>
+                    <TableCell>{dealer.contact || "N/A"}</TableCell>
+                    <TableCell>{dealer.location1 || "N/A"},{dealer.location2 || "N/A"}</TableCell>
+                    <TableCell>{dealer.company_name}</TableCell>
+                    <TableCell>{dealer.website || "www.abc.in"}</TableCell>
+                    <TableCell>{dealer.no_of_orders}</TableCell>
+                  </TableRow>
+                ))}
             </TableBody>
           </Table>
         </TableContainer>
       </Box>
       <TablePagination
-        rowsPerPageOptions={[5, 10, 25]}
+        rowsPerPageOptions={[25, 50, 75]}
         component="div"
         count={dealers.length}
         rowsPerPage={rowsPerPage}

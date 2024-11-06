@@ -5,6 +5,7 @@ import Tooltip from "@mui/material/Tooltip";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import {
+  Paper,
   Box,
   Button,
   TextField,
@@ -61,7 +62,7 @@ const OrderList = () => {
   const [orders, setOrders] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(10);
+  const [rowsPerPage, setRowsPerPage] = useState(25);
   const [anchorEl, setAnchorEl] = useState(null);
   const [currentColumn, setCurrentColumn] = useState("");
   const [sortConfig, setSortConfig] = useState({ key: "", direction: "asc" });
@@ -174,12 +175,6 @@ const OrderList = () => {
     setAnchorEl(null);
   };
 
-  // const handleStatusFilter = (status) => {
-  //   setStatusFilter(status);
-  //   setPage(0);
-  //   fetchOrders(); // Fetch orders immediately after filtering
-  //   setAnchorEl(null);
-  // };
 
   const handleOpenMenu = (event, column) => {
     setCurrentColumn(column);
@@ -247,7 +242,7 @@ const OrderList = () => {
 
   return (
     <Box sx={{ display: "flex" }}>
-      <Box sx={{ p: 2, flexGrow: 1 }}>
+      <Box sx={{ p: 1, flexGrow: 1 }}>
         <Box
           sx={{
             display: "flex",
@@ -310,7 +305,7 @@ const OrderList = () => {
             </IconButton>
           </Tooltip>
         </Box>
-        <TableContainer>
+        <TableContainer component={Paper}>
           <Table>
             <TableHead>
               <TableRow>
@@ -401,9 +396,9 @@ const OrderList = () => {
         </TableContainer>
 
         <TablePagination
-          rowsPerPageOptions={[10, 15, 20]}
+          rowsPerPageOptions={[25, 50, 75]}
           component="div"
-          count={orders.length} //
+          count={orders.length} 
           rowsPerPage={rowsPerPage}
           page={page}
           onPageChange={handleChangePage}
@@ -448,20 +443,7 @@ const OrderList = () => {
             </MenuItem>
           </>
         )}
-        {/* {currentColumn === "status" && (
-          <>
-            <MenuItem onClick={() => handleStatusFilter("all")}>All</MenuItem>
-            <MenuItem onClick={() => handleStatusFilter("pending")}>
-              Pending
-            </MenuItem>
-            <MenuItem onClick={() => handleStatusFilter("shipped")}>
-              Shipped
-            </MenuItem>
-            <MenuItem onClick={() => handleStatusFilter("completed")}>
-              Completed
-            </MenuItem>
-          </>
-        )} */}
+       
         {currentColumn === "creation_date" && (
           <>
             <MenuItem onClick={() => handleSort("creation_date", "asc")}>
