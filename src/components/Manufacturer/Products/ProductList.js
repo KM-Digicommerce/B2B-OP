@@ -46,17 +46,17 @@ function ProductList() {
       const categoryResponse = await axios.get(`${process.env.REACT_APP_IP}obtainProductCategoryList/?manufacture_unit_id=${manufactureUnitId}&filters=${filters}`);
       setCategories(categoryResponse.data.data || []);
 
-// Determine the sort_by_value based on sortConfig.direction
-// const sort_by_value = sortConfig.direction === "asc" ? 1 : (sortConfig.direction === "desc" ? -1 : 0);
-const productResponse = await axios.post(
-  `${process.env.REACT_APP_IP}obtainProductsList/`,
-  {
-    manufacture_unit_id: manufactureUnitId,
-    filters: filters,
-    sort_by: sortConfig.key,  // Use the current column (key) from the state
-    sort_by_value: sortConfig.direction === "asc" ? 1 : (sortConfig.direction === "desc" ? -1 : 0),  // Correctly pass the sort value
-  }
-);
+      // Determine the sort_by_value based on sortConfig.direction
+      // const sort_by_value = sortConfig.direction === "asc" ? 1 : (sortConfig.direction === "desc" ? -1 : 0);
+      const productResponse = await axios.post(
+        `${process.env.REACT_APP_IP}obtainProductsList/`,
+        {
+          manufacture_unit_id: manufactureUnitId,
+          filters: filters,
+          sort_by: sortConfig.key,  // Use the current column (key) from the state
+          sort_by_value: sortConfig.direction === "asc" ? 1 : (sortConfig.direction === "desc" ? -1 : 0),  // Correctly pass the sort value
+        }
+      );
 
       setItems(productResponse.data.data || []);
     } catch (err) {
@@ -99,7 +99,7 @@ const productResponse = await axios.post(
     setCurrentColumn(column);  // Set column to either "price" or "availability"
   };
 
-//Search event list
+  //Search event list
   const handleSearchChange = (event) => {
     setSearchTerm(event.target.value);
   };
@@ -167,23 +167,23 @@ const productResponse = await axios.post(
   //   setAnchorEl(null); // Close the sorting menu after selection
   // };
 
-  
+
   const handleSort = (key, direction) => {
     console.log('Sorting with:', key, direction); // Log key and direction to verify it's being set correctly
-    
+
     // Update the sorting configuration
     setSortConfig({ key, direction });
-  
+
     // Reset to the first page when sorting changes
     setPage(0);
-  
+
     // Call the fetchData function to fetch products with the new sort configuration
     fetchData();
-  
+
     // Close the sorting menu
     setAnchorEl(null);
   };
-// API request to fetch product data based on sorting and other filters
+  // API request to fetch product data based on sorting and other filters
 
 
 
@@ -194,7 +194,7 @@ const productResponse = await axios.post(
   };
 
 
-  
+
   //Bulk edit submit functionality
   const handleBulkEditSubmit = async () => {
     const productList = Array.from(selectedItems).map((id) => {
@@ -458,7 +458,7 @@ const productResponse = await axios.post(
             </MenuItem>
           </>
         )}
-      {/* {currentColumn === "name" && (
+        {/* {currentColumn === "name" && (
           <>
             <MenuItem onClick={() => handleSort("name", "asc")}>
               Sort A-Z

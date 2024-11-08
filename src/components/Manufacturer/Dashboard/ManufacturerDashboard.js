@@ -16,7 +16,7 @@ import PersonalImport from '../Products/PersonalImport';
 import ImportValidate from '../Products/ImportValidate';
 import DealerDetail from '../Dealers/DealerDetail';
 import OrderDetail from '../Orders/OrderDetail';
-import SettingsPage from '../Settings/Settingspage';
+// import SettingsPage from '../Settings/Settingspage';
 
 
 const ManufacturerDashboard = () => {

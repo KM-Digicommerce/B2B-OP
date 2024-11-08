@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import {
-    Button,
     Typography,
     Box,
     Grid,
@@ -21,7 +20,7 @@ import axios from 'axios';
 
 const PersonalImport = () => {
     const [userData, setUserData] = useState([]);
-    const [generalColumns, setGeneralColumns] = useState([]);
+    const [ setGeneralColumns] = useState([]);
     const [userColumns, setUserColumns] = useState([]);
     const [error, setError] = useState('');
     const [mappedData, setMappedData] = useState([]);

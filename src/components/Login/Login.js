@@ -52,9 +52,9 @@ const Login = () => {
     }
   };
 
-  const handleForgotPassword = () => {
-    navigate('/forgot-password'); // Adjust the path to your forgot password page
-  };
+  // const handleForgotPassword = () => {
+  //   navigate('/forgot-password'); // Adjust the path to your forgot password page
+  // };
 
   return (
     <Box display="flex" height="100vh">
