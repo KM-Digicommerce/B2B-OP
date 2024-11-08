@@ -24,10 +24,10 @@ const PopupModal = ({ open = false, onClose = () => {} }) => { // Default values
     navigate('/manufacturer/products/import');
   };
 
-  const handlePersonalImport = () => {
-    onClose(); // Close the modal
-    navigate('/manufacturer/products/personalimport');
-  };
+  // const handlePersonalImport = () => {
+  //   onClose(); // Close the modal
+  //   navigate('/manufacturer/products/personalimport');
+  // };
 
 
   return (

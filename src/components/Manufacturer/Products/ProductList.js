@@ -25,7 +25,7 @@ function ProductList() {
   const [isBulkEditing, setIsBulkEditing] = useState(false);
   const [isPopupOpen, setIsPopupOpen] = useState(false);
   // const [setAvailabilityFilter] = useState('all');
-  const [availabilityFilter, setAvailabilityFilter] = useState('all');
+  // const [ setAvailabilityFilter] = useState('all');
 
   const [anchorEl, setAnchorEl] = useState(null);
   const [sortConfig, setSortConfig] = useState({ key: "", direction: "asc" });
@@ -87,11 +87,11 @@ const productResponse = await axios.post(
     setIsPopupOpen(false);
   };
 
-  const handleClose = () => {
-    setIsBulkEditing(false);
-    setSelectedItems(new Set());
-    setEditedVisibility({});
-  };
+  // const handleClose = () => {
+  //   setIsBulkEditing(false);
+  //   setSelectedItems(new Set());
+  //   setEditedVisibility({});
+  // };
 
   //dropdown open menu
   const handleOpenMenu = (event, column) => {
@@ -113,7 +113,7 @@ const productResponse = await axios.post(
 
   // Availability filter
   const handleSelectAvailability = async (availability) => {
-    setAvailabilityFilter(availability);
+    // setAvailabilityFilter(availability);
     handleCloseMenu();
     await fetchData(availability === 'In-stock' ? 'true' : availability === 'Out of stock' ? 'false' : 'all');
   };

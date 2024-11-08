@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { useParams, useLocation, useNavigate, Link } from 'react-router-dom';
+import { useParams, useLocation, useNavigate } from 'react-router-dom';
 import {
   CircularProgress,
   Typography,
@@ -11,41 +11,37 @@ import {
   Card,
   CardMedia,
   CardContent,
-  TextField,
-  IconButton,
   Table,
   TableBody,
   TableCell,
   TableContainer,
   TableRow,
 } from '@mui/material';
-import Edit from '@mui/icons-material/Edit';
-
 function ProductDetail() {
   const navigate = useNavigate();
   const { id } = useParams();
-  const location = useLocation();
-  const initialEditMode = new URLSearchParams(location.search).get('edit') === 'true';
+  // const location = useLocation();
+  // const initialEditMode = new URLSearchParams(location.search).get('edit') === 'true';
 
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [mainImage, setMainImage] = useState('');
-  const [isEditMode, setIsEditMode] = useState(initialEditMode);
+  // const [isEditMode, setIsEditMode] = useState(initialEditMode);
 
   // Editable fields state
-  const [product_name, setName] = useState('');
-  const [long_description, setDescription] = useState('');
-  const [sku, setSku] = useState('');
-  const [model, setModel] = useState('');
-  const [mpn, setMpn] = useState('');
-  const [discount, setDiscount] = useState('');
-  const [upcEan, setUpcEan] = useState('');
-  const [quantity, setQuantity] = useState('');
-  const [color, setColor] = useState('');
-  const [weight, setWeight] = useState('');
-  const [size, setSize] = useState('');
-  const [availability, setAvailability] = useState(false);
+  // const [product_name, setName] = useState('');
+  // const [long_description, setDescription] = useState('');
+  // const [sku, setSku] = useState('');
+  // const [model, setModel] = useState('');
+  // const [mpn, setMpn] = useState('');
+  // const [discount, setDiscount] = useState('');
+  // const [upcEan, setUpcEan] = useState('');
+  // const [quantity, setQuantity] = useState('');
+  // const [color, setColor] = useState('');
+  // const [weight, setWeight] = useState('');
+  // const [size, setSize] = useState('');
+  // const [availability, setAvailability] = useState(false);
 
   useEffect(() => {
     const fetchProduct = async () => {
@@ -56,18 +52,18 @@ function ProductDetail() {
         setMainImage(data.logo || '');
 
         // Initialize editable fields
-        setName(data.product_name || '');
-        setDescription(data.long_description || '');
-        setSku(data.sku_number_product_code_item_number || '');
-        setModel(data.model || '');
-        setMpn(data.mpn || '');
-        setDiscount((data.discount?.toString() || '').replace('%', '') || '');
-        setUpcEan(data.upc_ean || '');
-        setQuantity(data.quantity || '');
-        setColor(data.attributes?.Color || '');
-        setWeight(data.attributes?.Weight || '');
-        setSize(data.attributes?.Size || '');
-        setAvailability(data.availability || false);
+        // setName(data.product_name || '');
+        // setDescription(data.long_description || '');
+        // setSku(data.sku_number_product_code_item_number || '');
+        // setModel(data.model || '');
+        // setMpn(data.mpn || '');
+        // setDiscount((data.discount?.toString() || '').replace('%', '') || '');
+        // setUpcEan(data.upc_ean || '');
+        // setQuantity(data.quantity || '');
+        // setColor(data.attributes?.Color || '');
+        // setWeight(data.attributes?.Weight || '');
+        // setSize(data.attributes?.Size || '');
+        // setAvailability(data.availability || false);
       } catch (err) {
         setError('Failed to load product details');
       } finally {
@@ -81,36 +77,36 @@ function ProductDetail() {
     navigate('/manufacturer/products');
   };
 
-  const handleSave = async () => {
-    try {
-      const updatedProduct = {
-        id,
-        sku_number_product_code_item_number: sku,
-        model,
-        mpn,
-        discount: Number(discount),
-        upc_ean: upcEan,
-        quantity: Number(quantity),
-        attributes: { Color: color, Size: size, Weight: weight },
-        availability,
-        currency: product.currency,
-        long_description,
-        product_name,
-        list_price: product.list_price,
-        images: product.images,
-        features: product.features,
-      };
+  // const handleSave = async () => {
+  //   try {
+  //     const updatedProduct = {
+  //       id,
+  //       sku_number_product_code_item_number: sku,
+  //       model,
+  //       mpn,
+  //       discount: Number(discount),
+  //       upc_ean: upcEan,
+  //       quantity: Number(quantity),
+  //       attributes: { Color: color, Size: size, Weight: weight },
+  //       availability,
+  //       currency: product.currency,
+  //       long_description,
+  //       product_name,
+  //       list_price: product.list_price,
+  //       images: product.images,
+  //       features: product.features,
+  //     };
 
-      await axios.post(`${process.env.REACT_APP_IP}updateProduct/`, updatedProduct, {
-        headers: { 'Content-Type': 'application/json' },
-      });
+  //     await axios.post(`${process.env.REACT_APP_IP}updateProduct/`, updatedProduct, {
+  //       headers: { 'Content-Type': 'application/json' },
+  //     });
 
-      setProduct((prev) => ({ ...prev, ...updatedProduct }));
-      // setIsEditMode(false);
-    } catch (error) {
-      setError('Failed to update product');
-    }
-  };
+  //     setProduct((prev) => ({ ...prev, ...updatedProduct }));
+  //     // setIsEditMode(false);
+  //   } catch (error) {
+  //     setError('Failed to update product');
+  //   }
+  // };
 
   const handleImageClick = (image) => setMainImage(image);
 

@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 
 const SuperAdminHome = () => {
-  const [categories, setCategories] = useState([]);
+  const [ setCategories] = useState([]);
 
   useEffect(() => {
     const fetchCategories = async () => {

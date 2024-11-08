@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Box, Drawer, List, ListItem, ListItemButton, ListItemText, Divider, Typography, Avatar, ListItemIcon } from '@mui/material';
+import { Box, Drawer, List, ListItem, ListItemButton, ListItemText, Divider,ListItemIcon } from '@mui/material';
 import { Dashboard, Business, Storefront, Settings } from '@mui/icons-material';
 import Logout from '../Login/Logout';
 

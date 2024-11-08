@@ -60,11 +60,11 @@ function ManufactureUserDetail() {
     }
   };
 
-  // Reset logo to null
-  const resetLogo = () => {
-    setSelectedLogo(null);
-    handleFieldChange('logo', null); // Set logo to null when reset
-  };
+  // // Reset logo to null
+  // const resetLogo = () => {
+  //   setSelectedLogo(null);
+  //   handleFieldChange('logo', null); // Set logo to null when reset
+  // };
 
   // Save changes
   const saveChanges = async () => {

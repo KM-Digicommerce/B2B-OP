@@ -47,28 +47,28 @@ function AddNewManufacture() {
     return valid;
   };
 
-  const fetchUsername = async () => {
-    if (!validateForm()) return;
-    try {
-      const response = await axios.get(
-        `${process.env.REACT_APP_IP}generateUserName/`,
-        {
-          params: {
-            manufacture_unit_id: manufactureUnitId,
-            name: name,
-          },
-        }
-      );
+  // const fetchUsername = async () => {
+  //   if (!validateForm()) return;
+  //   try {
+  //     const response = await axios.get(
+  //       `${process.env.REACT_APP_IP}generateUserName/`,
+  //       {
+  //         params: {
+  //           manufacture_unit_id: manufactureUnitId,
+  //           name: name,
+  //         },
+  //       }
+  //     );
 
-      if (response.data && response.data.data && response.data.data.username) {
-        setUsername(response.data.data.username);
-      } else {
-        console.error("Username not found in response:", response.data);
-      }
-    } catch (error) {
-      console.error("Error generating username:", error);
-    }
-  };
+  //     if (response.data && response.data.data && response.data.data.username) {
+  //       setUsername(response.data.data.username);
+  //     } else {
+  //       console.error("Username not found in response:", response.data);
+  //     }
+  //   } catch (error) {
+  //     console.error("Error generating username:", error);
+  //   }
+  // };
 
   const handleLogoChange = (e) => {
     setLogo(e.target.files[0]);

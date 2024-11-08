@@ -17,7 +17,6 @@ import {
   Paper,
 } from "@mui/material";
 import AddNewDealer from "./AddNewDealer";
-import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { styled } from '@mui/material/styles';
 
@@ -41,7 +40,7 @@ function DealerList() {
   const handleClose = () => setOpen(false);
 
   const [searchTerm, setSearchTerm] = useState('');
-  const [dealers, setDealers] = useState([]);
+  const [dealers] = useState([]);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
 
