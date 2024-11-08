@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
     Button,
     Typography,
@@ -27,16 +27,26 @@ const PersonalImport = () => {
     const [mappedData, setMappedData] = useState([]);
 
     const columnMapping = {
-        "SKU_number": "sku_number_product_code_item_number",
         "Model_number": "model",
-        "MPN": "mpn",
-        "UPC": "upc_ean",
+        "SKU_number": "sku_number_product_code_item_number",
+        "Upc": "upc_ean",
         "Breadcrumbs": "breadcrumb",
         "Product_name": "product_name",
-        "Price": "list_price",
+        "Price": "msrp",
         "Price_currency": "currency",
-        // Add more mappings as required...
+        "Brand_name": "brand_name",
+        "Product_img": "images",
+        "Short_descriptions": "short_description",
+        "Long_description": "long_description",
+        "Highlighted_points": "features",
+        "Rating": "tags", // Example placeholder, adjust as needed
+        "Review_count": "quantity", // Example placeholder, adjust as needed
+        "URL": "attributes", // Example placeholder, adjust as needed
+        "Return_policy_days": "return_applicable",
+        "Specification": "attributes", // Example placeholder, adjust as needed
+        "Availability": "availability"
     };
+    
 
     const handleFileChange = async (event) => {
         const file = event.target.files[0];
@@ -74,6 +84,10 @@ const PersonalImport = () => {
             const dbData = response.data.data;
             setGeneralColumns(dbData.general_columns || []);
             setUserColumns(dbData.user_columns || []);
+            console.log('database', dbData.general_columns)
+            console.log('userdb', dbData.user_columns)
+            
+        
             const mapped = mapUserDataWithDbData(jsonData, dbData.general_columns);
             setMappedData(mapped);
         } catch (error) {
@@ -82,19 +96,47 @@ const PersonalImport = () => {
         }
     };
 
-    const mapUserDataWithDbData = (userData, generalColumns) => {
-        return userData.map(userRow => {
+    // const mapUserDataWithDbData = (userData, generalColumns) => {
+    //     console.log(userData,"mappedRow");
+    //     console.log(generalColumns,"generalColumns");
+
+    //     return userData.map(userRow => {
+    //         const mappedRow = {};
+    //         for (const userField of userColumns) {
+    //             const generalField = columnMapping[userField];
+    //             if (generalField) {
+    //                 mappedRow[generalField] = userRow[userField] || null;
+    //             }
+    //         }
+    //               return mappedRow;
+    //     });
+    // };
+
+
+    const mapUserDataWithDbData = (userData) => {
+        return userData.map((userRow) => {
             const mappedRow = {};
-            for (const userField of userColumns) {
+            
+            // For each key in columnMapping, map userRow data to the general field
+            Object.keys(columnMapping).forEach((userField) => {
                 const generalField = columnMapping[userField];
-                if (generalField) {
-                    mappedRow[generalField] = userRow[userField] || null;
+                
+                // Map the data only if the field exists in userRow
+                if (userRow[userField] !== undefined) {
+                    mappedRow[generalField] = userRow[userField];
                 }
-            }
+            });
+            
             return mappedRow;
         });
     };
-
+    
+    useEffect(() => {
+        if (userData.length > 0) {
+            const mapped = mapUserDataWithDbData(userData);
+            setMappedData(mapped);
+        }
+    }, [userData]); 
     return (
         <Box sx={{ padding: 2 }}>
             <Typography variant="h6">Upload an Excel File</Typography>
@@ -129,15 +171,16 @@ const PersonalImport = () => {
                             </ListItem>
                         ))}
                     </List>
+                   
                 </Grid>
                 <Grid item xs={6}>
                     <Typography variant="h6">General Columns</Typography>
                     <List>
-                        {generalColumns.map((col, index) => (
-                            <ListItem key={index}>
-                                <ListItemText primary={col} />
-                            </ListItem>
-                        ))}
+                   
+                    {Object.keys(mappedData[0]).map((header) => (
+                                    <ListItem key={header}>{header}</ListItem>
+                                ))}
+                
                     </List>
                 </Grid>
             </Grid>
@@ -153,13 +196,7 @@ const PersonalImport = () => {
                             </TableRow>
                         </TableHead>
                         <TableBody>
-                            {mappedData.map((row, index) => (
-                                <TableRow key={index}>
-                                    {Object.values(row).map((cell, idx) => (
-                                        <TableCell key={idx}>{cell}</TableCell>
-                                    ))}
-                                </TableRow>
-                            ))}
+                         
                         </TableBody>
                     </Table>
                 </TableContainer>

@@ -16,6 +16,7 @@ import PersonalImport from '../Products/PersonalImport';
 import ImportValidate from '../Products/ImportValidate';
 import DealerDetail from '../Dealers/DealerDetail';
 import OrderDetail from '../Orders/OrderDetail';
+import SettingsPage from '../Settings/Settingspage';
 
 
 const ManufacturerDashboard = () => {
@@ -43,7 +44,7 @@ const ManufacturerDashboard = () => {
           
           <Route path="products/validate" element={<ImportValidate />} />
           <Route path="products/personalimport" element={<PersonalImport />} />
-
+          {/* <Route path="settings" element={<SettingsPage />} /> */}
         </Routes>
       </Box>
     </Box>

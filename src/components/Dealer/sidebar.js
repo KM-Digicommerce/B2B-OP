@@ -39,16 +39,11 @@ const Sidebar = () => {
                 </ListItem>
                 <ListItem disablePadding>
                     <ListItemButton component={Link} to="/dealer/orders"> 
-                        <ListItemText primary="My Orders" />
+                        <ListItemText primary="Orders" />
                     </ListItemButton>
                 </ListItem>
                 <ListItem disablePadding>
-                    <ListItemButton> 
-                        <ListItemText primary="My Staffs" />
-                    </ListItemButton>
-                </ListItem>
-                <ListItem disablePadding>
-                    <ListItemButton>
+                    <ListItemButton component={Link} to="/dealer/settings">
                         <ListItemText primary="Settings" />
                     </ListItemButton>
                 </ListItem>

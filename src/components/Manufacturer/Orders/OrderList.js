@@ -26,11 +26,10 @@ import MoreVertIcon from "@mui/icons-material/MoreVert";
 import FileDownloadOutlinedIcon from "@mui/icons-material/FileDownloadOutlined";
 import { styled } from "@mui/material/styles";
 import "../../Manufacturer/manufacturer.css";
-import { DemoContainer } from '@mui/x-date-pickers/internals/demo';
-import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-import { DatePicker } from '@mui/x-date-pickers/DatePicker';
-
+import { DemoContainer } from "@mui/x-date-pickers/internals/demo";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 
 // Styled TextField
 const CustomTextField = styled(TextField)(({ theme }) => ({
@@ -66,15 +65,15 @@ const OrderList = () => {
   const [anchorEl, setAnchorEl] = useState(null);
   const [currentColumn, setCurrentColumn] = useState("");
   const [sortConfig, setSortConfig] = useState({ key: "", direction: "asc" });
-  const [delivery_status, setdelivery_status] = useState("all");
-  const [fulfilled_status, setfulfilled_status] = useState("all");
-  const [payment_status, setpayment_status] = useState("all");
+  const [delivery_status, setDeliveryStatus] = useState("all");
+  const [fulfilled_status, setFulfilledStatus] = useState("all");
+  const [payment_status, setPaymentStatus] = useState("all");
   const [exportAnchorEl, setExportAnchorEl] = useState(null);
   const [dealers, setDealers] = useState([]);
   const [dealerAnchorEl, setDealerAnchorEl] = useState(null);
   const [selectedDealerIds, setSelectedDealerIds] = useState([]);
   const [selectedDate, setSelectedDate] = useState(null);
-
+  
 
   const handleRowClick = (orderId) => {
     navigate(`/manufacturer/order-details/${orderId}`); // Navigate to the OrderDetail page with orderId
@@ -107,29 +106,36 @@ const OrderList = () => {
 
   useEffect(() => {
     fetchOrders();
-  }, [
-    user.manufacture_unit_id,
-    searchTerm,
-    sortConfig,
-    page,
-    rowsPerPage,
-  ]);
+  }, [user.manufacture_unit_id, searchTerm, sortConfig, page, rowsPerPage]);
 
-  const fetchOrders = async () => {
+  const fetchOrders = async (filterType, status) => {
     if (!user || !user.manufacture_unit_id) {
       console.error("User or manufacture_unit_id is not defined.");
       return;
     }
 
-    try {
-    // Check the selectedDate before formatting it
-    console.log("Selected Date before formatting:", selectedDate);
-      
-    // Ensure selectedDate is a valid Dayjs object
-    const formattedDate = selectedDate ? selectedDate.format("YYYY-MM-DD") : null;
+    let filterCriteria = {};
 
-    // Log the formatted date
-    console.log("Sending selected date:", formattedDate);
+     // Set filter criteria based on the selected filter
+  if (filterType === "delivery_status") {
+    filterCriteria.deliveryStatus = status;
+  } else if (filterType === "fulfilled_status") {
+    filterCriteria.fulfilledStatus = status;
+  } else if (filterType === "payment_status") {
+    filterCriteria.paymentStatus = status;
+  }
+
+    try {
+      // Check the selectedDate before formatting it
+      // console.log("Selected Date before formatting:", selectedDate);
+
+      // Ensure selectedDate is a valid Dayjs object
+      const formattedDate = selectedDate
+        ? selectedDate.format("YYYY-MM-DD")
+        : null;
+
+      // Log the formatted date
+      // console.log("Sending selected date:", formattedDate);
 
       const response = await axios.post(
         `${process.env.REACT_APP_IP}obtainOrderList/`,
@@ -141,15 +147,21 @@ const OrderList = () => {
           page,
           rows_per_page: rowsPerPage,
           dealer_list: selectedDealerIds,
-          delivery_status : delivery_status,
-          fulfilled_status : fulfilled_status,
-          payment_status : payment_status,
+          delivery_status: delivery_status,
+          fulfilled_status: fulfilled_status,
+          payment_status: payment_status,
           search_by_date: formattedDate,
+          delivery_status,
+          fulfilled_status,
+          payment_status,
         }
       );
       setOrders(response.data.data);
-      console.log(response.data.data);
-      console.log("selectedDealerIds :", selectedDealerIds);
+      console.log("Delivery Status:", delivery_status);
+        console.log("Fulfilled Status:", fulfilled_status);
+        console.log("Payment Status:", payment_status);
+      // console.log(response.data.data);
+      // console.log("selectedDealerIds :", selectedDealerIds);
     } catch (error) {
       console.error("Error fetching orders:", error);
     }
@@ -175,6 +187,32 @@ const OrderList = () => {
     setAnchorEl(null);
   };
 
+  const handleStatusFilter = (statusType, status) => {
+   // Clear all filters except the one that was selected
+  if (statusType === "delivery_status") {
+    setDeliveryStatus(status);
+    setFulfilledStatus("all");
+    setPaymentStatus("all");
+    fetchOrders("delivery_status", status);
+  } else if (statusType === "fulfilled_status") {
+    setDeliveryStatus("all");
+    setFulfilledStatus(status);
+    setPaymentStatus("all");
+    fetchOrders("fulfilled_status", status);
+  } else if (statusType === "payment_status") {
+    setDeliveryStatus("all");
+    setFulfilledStatus("all");
+    setPaymentStatus(status);
+    fetchOrders("payment_status", status);
+  }
+
+    
+   
+  };
+
+  useEffect(() => {
+    fetchOrders();
+  }, [delivery_status, fulfilled_status, payment_status]);
 
   const handleOpenMenu = (event, column) => {
     setCurrentColumn(column);
@@ -264,23 +302,22 @@ const OrderList = () => {
           </Button>
 
           <LocalizationProvider dateAdapter={AdapterDayjs}>
-      <DemoContainer components={['DatePicker']}>
-        <DatePicker
-        
-          value={selectedDate}
-          onChange={(newDate) => {
-            console.log("Selected Date after change:", newDate);
-            setSelectedDate(newDate);
-          }}
-          renderInput={(params) => <TextField {...params} />}
-        />
-      </DemoContainer>
-      
-      {/* Button to manually trigger fetchOrders */}
-      <Button variant="contained" color="primary" onClick={fetchOrders}>
-        Fetch Orders
-      </Button>
-    </LocalizationProvider>
+            <DemoContainer components={["DatePicker"]}>
+              <DatePicker
+                value={selectedDate}
+                onChange={(newDate) => {
+                  console.log("Selected Date after change:", newDate);
+                  setSelectedDate(newDate);
+                }}
+                renderInput={(params) => <TextField {...params} />}
+              />
+            </DemoContainer>
+
+            {/* Button to manually trigger fetchOrders */}
+            <Button sx={{fontSize:'14px'}} variant="contained" color="primary" onClick={fetchOrders}>
+              Fetch Orders
+            </Button>
+          </LocalizationProvider>
 
           <CustomTextField
             variant="outlined"
@@ -305,6 +342,7 @@ const OrderList = () => {
             </IconButton>
           </Tooltip>
         </Box>
+        <Button sx={{p:0 , mb:1, textTransform:'none'}}>Total Orders : {orders.length} </Button>
         <TableContainer component={Paper}>
           <Table>
             <TableHead>
@@ -312,31 +350,31 @@ const OrderList = () => {
                 <TableCell align="center">
                   OrderId
                   <IconButton onClick={(e) => handleOpenMenu(e, "_id")}>
-                    <MoreVertIcon sx={{ fontSize: "14px" }} />
+                    {/* <MoreVertIcon sx={{ fontSize: "14px" }} /> */}
                   </IconButton>
                 </TableCell>
                 <TableCell align="center">
                   Dealer Name
                   <IconButton onClick={(e) => handleOpenMenu(e, "dealer_name")}>
-                    <MoreVertIcon sx={{ fontSize: "14px" }} />
+                    {/* <MoreVertIcon sx={{ fontSize: "14px" }} /> */}
                   </IconButton>
                 </TableCell>
                 <TableCell align="center">
                   Destination
                   <IconButton onClick={(e) => handleOpenMenu(e, "destination")}>
-                    <MoreVertIcon sx={{ fontSize: "14px" }} />
+                    {/* <MoreVertIcon sx={{ fontSize: "14px" }} /> */}
                   </IconButton>
                 </TableCell>
                 <TableCell align="center">
                   Total Items
                   <IconButton onClick={(e) => handleOpenMenu(e, "total_items")}>
-                    <MoreVertIcon sx={{ fontSize: "14px" }} />
+                    {/* <MoreVertIcon sx={{ fontSize: "14px" }} /> */}
                   </IconButton>
                 </TableCell>
                 <TableCell align="center">
                   Order Value
                   <IconButton onClick={(e) => handleOpenMenu(e, "amount")}>
-                    <MoreVertIcon sx={{ fontSize: "14px" }} />
+                    {/* <MoreVertIcon sx={{ fontSize: "14px" }} /> */}
                   </IconButton>
                 </TableCell>
                 <TableCell align="center">
@@ -344,7 +382,7 @@ const OrderList = () => {
                   <IconButton
                     onClick={(e) => handleOpenMenu(e, "creation_date")}
                   >
-                    <MoreVertIcon sx={{ fontSize: "14px" }} />
+                    {/* <MoreVertIcon sx={{ fontSize: "14px" }} /> */}
                   </IconButton>
                 </TableCell>
                 <TableCell align="center">
@@ -358,7 +396,7 @@ const OrderList = () => {
                 <TableCell align="center">
                   Fulfillment Status
                   <IconButton
-                    onClick={(e) => handleOpenMenu(e, "fulfillment_status")}
+                    onClick={(e) => handleOpenMenu(e, "fulfilled_status")}
                   >
                     <MoreVertIcon sx={{ fontSize: "14px" }} />
                   </IconButton>
@@ -374,23 +412,33 @@ const OrderList = () => {
               </TableRow>
             </TableHead>
             <TableBody>
-              {orders.map((order) => (
-                <TableRow
-                  key={order._id}
-                  onClick={() => handleRowClick(order._id)}
-                  style={{ cursor: "pointer" }}
-                >
-                  <TableCell align="center">{order.order_id}</TableCell>
-                  <TableCell align="center">{order.dealer_name}</TableCell>
-                  <TableCell align="center">{order.address.city},{order.address.country}</TableCell>
-                  <TableCell align="center">{order.total_items}</TableCell>
-                  <TableCell align="center">{order.amount}</TableCell>
-                  <TableCell align="center">{new Date(order.creation_date).toLocaleDateString()}</TableCell>
-                  <TableCell align="center">{order.payment_status}</TableCell>
-                  <TableCell align="center">{order.fulfilled_status}</TableCell>
-                  <TableCell align="center">{order.delivery_status}</TableCell>
-                </TableRow>
-              ))}
+              {orders
+                .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                .map((order) => (
+                  <TableRow
+                    key={order._id}
+                    onClick={() => handleRowClick(order._id)}
+                    style={{ cursor: "pointer" }}
+                  >
+                    <TableCell align="center">{order.order_id}</TableCell>
+                    <TableCell align="center">{order.dealer_name}</TableCell>
+                    <TableCell align="center">
+                      {order.address.city},{order.address.country}
+                    </TableCell>
+                    <TableCell align="center">{order.total_items}</TableCell>
+                    <TableCell align="center">{order.amount}</TableCell>
+                    <TableCell align="center">
+                      {new Date(order.creation_date).toLocaleDateString()}
+                    </TableCell>
+                    <TableCell align="center">{order.payment_status}</TableCell>
+                    <TableCell align="center">
+                      {order.fulfilled_status}
+                    </TableCell>
+                    <TableCell align="center">
+                      {order.delivery_status}
+                    </TableCell>
+                  </TableRow>
+                ))}
             </TableBody>
           </Table>
         </TableContainer>
@@ -398,7 +446,7 @@ const OrderList = () => {
         <TablePagination
           rowsPerPageOptions={[25, 50, 75]}
           component="div"
-          count={orders.length} 
+          count={orders.length}
           rowsPerPage={rowsPerPage}
           page={page}
           onPageChange={handleChangePage}
@@ -413,7 +461,7 @@ const OrderList = () => {
         open={Boolean(anchorEl)}
         onClose={handleCloseMenu}
       >
-        {currentColumn === "_id" && (
+        {/* {currentColumn === "_id" && (
           <>
             <MenuItem onClick={() => handleSort("_id", "asc")}>
               Sort by Ascending
@@ -442,8 +490,93 @@ const OrderList = () => {
               Sort High to Low
             </MenuItem>
           </>
+        )} */}
+        {currentColumn === "delivery_status" && (
+          <>
+            <MenuItem
+              onClick={() => handleStatusFilter("delivery_status", "all")}
+            >
+              All
+            </MenuItem>
+            <MenuItem
+              onClick={() => handleStatusFilter("delivery_status", "pending")}
+            >
+              Pending
+            </MenuItem>
+            <MenuItem
+              onClick={() => handleStatusFilter("delivery_status", "shipped")}
+            >
+              Shipped
+            </MenuItem>
+            <MenuItem
+              onClick={() => handleStatusFilter("delivery_status", "completed")}
+            >
+              Completed
+            </MenuItem>
+            <MenuItem
+              onClick={() => handleStatusFilter("delivery_status", "canceled")}
+            >
+              Canceled
+            </MenuItem>
+          </>
         )}
-       
+
+        {currentColumn === "fulfilled_status" && (
+          <>
+            <MenuItem
+              onClick={() => handleStatusFilter("fulfilled_status", "all")}
+            >
+              All
+            </MenuItem>
+            <MenuItem
+              onClick={() =>
+                handleStatusFilter("fulfilled_status", "fulfilled")
+              }
+            >
+              Fulfilled
+            </MenuItem>
+            <MenuItem
+              onClick={() =>
+                handleStatusFilter("fulfilled_status", "unfulfilled")
+              }
+            >
+              Unfulfilled
+            </MenuItem>
+            <MenuItem
+              onClick={() =>
+                handleStatusFilter("fulfilled_status", "partially fulfilled")
+              }
+            >
+              Partially Fulfilled
+            </MenuItem>
+          </>
+        )}
+
+        {currentColumn === "payment_status" && (
+          <>
+            <MenuItem
+              onClick={() => handleStatusFilter("payment_status", "all")}
+            >
+              All
+            </MenuItem>
+            <MenuItem
+              onClick={() => handleStatusFilter("payment_status", "Pending")}
+            >
+              Pending
+            </MenuItem>
+            <MenuItem
+              onClick={() => handleStatusFilter("payment_status", "Paid")}
+            >
+              Paid
+            </MenuItem>
+            <MenuItem
+              onClick={() => handleStatusFilter("payment_status", "Failed")}
+            >
+              Failed
+            </MenuItem>
+          </>
+        )}
+
         {currentColumn === "creation_date" && (
           <>
             <MenuItem onClick={() => handleSort("creation_date", "asc")}>

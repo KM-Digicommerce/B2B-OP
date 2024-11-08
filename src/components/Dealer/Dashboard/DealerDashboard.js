@@ -7,6 +7,7 @@ import NotificationBar from '../../Dealer/NotificationBar';
 import DealerHome from './DealerHome';
 import Products from '../Products/ProductList';
 import Orders from '../orders/orderList';
+import Settings from '../settings/settings';
 
 const DealerDashboard = () => {
   return (
@@ -18,6 +19,7 @@ const DealerDashboard = () => {
              <Route path="/" element={<DealerHome/>} />
              <Route path="orders" element={<Orders />} />
              <Route path="products" element={<Products />} />
+             <Route path="settings" element={<Settings/>} />
            </Routes>
          </Box>
        </Box>

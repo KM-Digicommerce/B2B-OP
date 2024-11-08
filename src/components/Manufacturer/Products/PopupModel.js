@@ -16,29 +16,30 @@ const style = {
   borderRadius: 2,
 };
 
-const PopupModal = ({ open, onClose }) => { // Changed handleClose to onClose
+const PopupModal = ({ open = false, onClose = () => {} }) => { // Default values
   const navigate = useNavigate();
 
   const handleGeneralImport = () => {
     onClose(); // Close the modal
-    navigate('/manufacturer/products/import'); // Navigate to the import page
+    navigate('/manufacturer/products/import');
   };
 
   const handlePersonalImport = () => {
     onClose(); // Close the modal
-    navigate('/manufacturer/products/personalimport'); // Navigate to the personal import page
+    navigate('/manufacturer/products/personalimport');
   };
+
 
   return (
     <Modal
       open={open}
-      onClose={onClose} // Updated here
+      onClose={onClose}
       aria-labelledby="modal-title"
       aria-describedby="modal-description"
     >
       <Box sx={style}>
         <IconButton
-          onClick={onClose} // Updated here
+          onClick={onClose}
           aria-label="close"
           sx={{ position: 'absolute', right: 8, top: 8 }}
         >
@@ -50,9 +51,9 @@ const PopupModal = ({ open, onClose }) => { // Changed handleClose to onClose
         <Button onClick={handleGeneralImport} variant="contained" color="primary" sx={{ mt: 2, width: '100%' }}>
           General Import
         </Button>
-        <Button onClick={handlePersonalImport} variant="contained" color="primary" sx={{ mt: 2, width: '100%' }}>
+        {/* <Button onClick={handlePersonalImport} variant="contained" color="primary" sx={{ mt: 2, width: '100%' }}>
           Personal Import
-        </Button>
+        </Button> */}
       </Box>
     </Modal>
   );

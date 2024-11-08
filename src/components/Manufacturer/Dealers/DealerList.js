@@ -94,14 +94,14 @@ function DealerList() {
   };
 
   return (
-    <Box sx={{ p: 2, flexGrow: 1 }}>
+    <Box >
       <Box
         sx={{
           display: "flex",
           justifyContent: "flex-end",
           alignItems: "center",
-          marginBottom: "20px",
           gap: 2,
+          padding:'10px 10px 0px 10px'
         }}
       >
         <Box>
@@ -154,11 +154,11 @@ function DealerList() {
                     style={{ cursor: "pointer" }}
                   >
                     <TableCell>{dealer.username}</TableCell>
-                    <TableCell>{dealer.email || "N/A"}</TableCell>
-                    <TableCell>{dealer.contact || "N/A"}</TableCell>
-                    <TableCell>{dealer.location1 || "N/A"},{dealer.location2 || "N/A"}</TableCell>
+                    <TableCell>{dealer.email}</TableCell>
+                    <TableCell>{dealer.contact}</TableCell>
+                    <TableCell>{dealer.location1 },{dealer.location2}</TableCell>
                     <TableCell>{dealer.company_name}</TableCell>
-                    <TableCell>{dealer.website || "www.abc.in"}</TableCell>
+                    <TableCell>{dealer.website }</TableCell>
                     <TableCell>{dealer.no_of_orders}</TableCell>
                   </TableRow>
                 ))}
