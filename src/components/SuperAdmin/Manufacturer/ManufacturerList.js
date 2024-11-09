@@ -1,4 +1,4 @@
-// src/components/Manufacturer/Dealers/ManufacturerList.js
+// // src/components/Manufacturer/Dealers/ManufacturerList.js
 
 import React, { useEffect, useState } from 'react';
 import {
